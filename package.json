@@ -1,0 +1,17 @@
+{
+  "name": "perpetual_art_contract",
+  "version": "1.0.0",
+  "description": "Welcome to a new form of art auctions. Inspired by thoughts in the book Radical Markets (link to book/website) this perpetual contract aims to provide a proving ground for the auctions theory described in Radical Markets.",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "printfsam",
+  "license": "MIT",
+  "dependencies": {
+    "openzeppelin-solidity": "^2.1.3"
+  }
+}
