@@ -20,24 +20,27 @@ contract("ArtPerpet", accounts => {
 		// Set Hash
 		await instance.setArtHash("test Award");
 		// Bid 
-		await instance.placeBid(web3.eth.accounts[0],1, {from: web3.eth.accounts[1]});
+		await instance.placeBid(web3.eth.accounts[0],1000000000000000000, {from: web3.eth.accounts[1]});
 		console.log("Owner:",web3.eth.accounts[0], " Highest Bidder", web3.eth.accounts[1]);
 		let hbidder = await instance.getHighestBidder.call(web3.eth.accounts[0]);
 		console.log(hbidder);
+		let hbidderAmt = await instance.getHighestBidAmt.call(web3.eth.accounts[0]);
+		console.log(web3.fromWei(hbidderAmt,'ether').toString());
 	});
 	it('should set award', async () => {
 		let instance = await ArtPerpet.deployed();
 		// Set Hash
 		await instance.setArtHash("test Award");
 		// Bid 
-		await instance.placeBid(web3.eth.accounts[0],1, {from: web3.eth.accounts[1]});
-		let devOwner = await instance.devOwner.call();		
-		let devAmt = await instance.pendingWithdraws.call(devOwner);
-		let artistAmt = await instance.pendingWithdraws.call(web3.eth.accounts[0]);
+		await instance.placeBid(web3.eth.accounts[0],1000000000000000000, {from: web3.eth.accounts[1]});
+		//let devOwner = await instance.devOwner.call();		
+		//let devAmt = await instance.pendingWithdraws.call(devOwner);
+		//let artistAmt = await instance.pendingWithdraws.call(web3.eth.accounts[0]);
 		//console.log(web3.fromWei(devAmt,'Gwei').toString(),web3.fromWei(artistAmt,'Gwei').toString());
 		await instance.awardBid("test Award");
-		let devAmtAfter = await instance.pendingWithdraws.call(devOwner);
-		let artistAmtAfter = await instance.pendingWithdraws.call(web3.eth.accounts[0]);
-		//console.log(web3.fromWei(devAmtAfter,'Gwei').toString(),web3.fromWei(artistAmtAfter,'Gwei').toString());
+		await instance.withdraw();
+		//let devAmtAfter = await instance.pendingWithdraws.call(devOwner);
+		//let artistAmtAfter = await instance.pendingWithdraws.call(web3.eth.accounts[0]);
+		//console.log(web3.fromWei(devAmtAfter,'Gwei').toString(),web3.fromWei(artistAmtAfter,'Gwei').toString());*/
 	});
 });

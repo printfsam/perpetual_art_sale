@@ -32,13 +32,13 @@ contract ArtPerpet {
 
   // Bidding is over
   function awardBid (string artHashToCheck) public payable {//checkArtOwner(now) {//checkTimeStop(now){ 
-    pendingWithdraws[devOwner] = /*(devAmount **/ highestBid[msg.sender];//);
-    pendingWithdraws[msg.sender] = /*(artistAmount **/ highestBid[msg.sender];//);
+    pendingWithdraws[devOwner] = (devAmount * highestBid[msg.sender]);
+    pendingWithdraws[msg.sender] = (artistAmount * highestBid[msg.sender]);
     //pendingWithdraws[charity] = (charityAmount * highestBid[msg.sender]);
     // Send to NFT contract
     // reset timer
     creationTime[msg.sender] = now;
-    withdraw();  
+    //withdraw();  
   }
 
   //Standard Withdraw function
@@ -49,12 +49,15 @@ contract ArtPerpet {
     //pendingWithdraws[charity] = 0;
     pendingWithdraws[msg.sender] = 0;
     pendingWithdraws[devOwner] = 0;
-    msg.sender.transfer(amountArtist);
-    devOwner.transfer(amountDev);
+    //msg.sender.transfer(amountArtist);
+    //devOwner.transfer(amountDev);
     //charity.transfer(amountCharity);
   }
   function getHighestBidder(address addr) public view returns(address){
     return bidder[addr];
+  }
+  function getHighestBidAmt(address addr) public view returns(uint){
+    return highestBid[addr];
   }
   // check the time to see if it's over the limit
   modifier checkTimeStop(uint _time) { 
