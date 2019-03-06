@@ -22,10 +22,10 @@ The smart contract will be realized in Solidity and pushed to the Public Ethereu
 
 
 ## Pay Breakdown
-Artist:    40%
-Owner:     30%
-Charity:   20%
-Dev:       10%
+* Artist:    40%
+* Owner:     30%
+* Charity:   20%
+* Dev:       10%
 
 
 
@@ -39,16 +39,3 @@ Buyer 1 now has to match the current price of the bid, which means he has to pay
 Buyer 1 now has to match the difference between the current price and bid price.
 Buyer 1 should have some incentive to keep the price????
 
-
-
-Current Art
-
-https://www.cryptoarte.io/store - crypto art might use this
-cryptograffiti - might want to use to sell art
-
-
-Testing
-ArtPerpet.deployed().then(instance => instance.setArtHash("samtest"))
-ArtPerpet.deployed().then(instance => instance.artHash.call(web3.eth.accounts[0]))
-
-ArtPerpet.deployed().then(instance => instance.award.call(web3.eth.accounts[0]))
