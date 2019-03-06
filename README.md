@@ -6,7 +6,7 @@ Goals:
 * Allow Artists to sell their own digital artwork without neededing a clearinghouse, set thier own price, and benefit from each additional sale.
 * Let potential buyers bid on the price of the artwork perpetually
 * Discourage squatting on artwork by owners
-* Realize Perpetual Auction ideals
+* Realize longer term Perpetual Auction ideals
 
 ## ELI5
 
