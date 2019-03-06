@@ -7,8 +7,8 @@ contract ArtPerpet {
   address public charity;
   mapping(address =>address) public bidder;
   mapping(address =>uint) public highestBid;
-  mapping (address => uint) pendingWithdraws;
-  mapping(address => uint) creationTime;
+  mapping (address => uint) public pendingWithdraws;
+  mapping(address => uint) public creationTime;
   uint public bidTime = 1 weeks;
   uint public devAmount = 1;
   uint public charityAmount = 90;
@@ -16,38 +16,42 @@ contract ArtPerpet {
 
   constructor() public {
     devOwner = msg.sender;
+    charity = '0x627306090abab3a6e1400e9345bc60c78a8bef57';
   }
 
-  function setArtHash(string artHashIn){
+  function setArtHash(string artHashIn) public checkHash(artHashToCheck){
     artHash[msg.sender] = artHashIn;
     creationTime[msg.sender] = now;
   }
 
   function placeBid(address artist) public checkTimeGo(now) checkBid(msg.sender){
-      // Return eth to the previous bidder    
-      // set new highest bidder addr to msg.sender if checkBid is true
       bidder[artist] = msg.sender;
       // Set the bid
       highestBid[artist] = msg.value;
     }
 
   // Bidding is over
-  function awardBid (string artHashToCheck) public payable checkArtist(artHashToCheck) checkTimeStop(now){ 
+  function awardBid (string artHashToCheck) public payable checkArtOwner() checkTimeStop(now){ 
     pendingWithdraws[devOwner] = (devAmount * highestBid[msg.sender]);
     pendingWithdraws[msg.sender] = (artistAmount * highestBid[msg.sender]);
     pendingWithdraws[charity] = (charityAmount * highestBid[msg.sender]);
-    withdraw();  
     // Send to NFT contract
-    // send funds to charity address
     // reset timer
     creationTime[msg.sender] = now;
+    withdraw();  
   }
 
   //Standard Withdraw function
   function withdraw() public {
-    uint amount = pendingWithdraws[msg.sender];
+    uint amountArtist = pendingWithdraws[msg.sender];
+    uint amountDev = pendingWithdraws[devOwner];
+    uint amountCharity = pendingWithdraws[charity];
+    pendingWithdraws[charity] = 0;
     pendingWithdraws[msg.sender] = 0;
-    msg.sender.transfer(amount);
+    pendingWithdraws[devOwner] = 0;
+    msg.sender.transfer(amountArtist);
+    devOwner.transfer(amountDev);
+    charity.transfer(amountCharity);
   }
   
   // check the time to see if it's over the limit
@@ -70,13 +74,17 @@ contract ArtPerpet {
           _; 
         }
   }
-  // Check to see if it's an artist
-  modifier checkArtist(string artHashCheck) { 
-        /*if((artHash[msg.sender] = artHashCheck)){
+  // Check to see if hash is already in there
+  modifier checkHash(string artHashToCheck) { 
+        if(artHash[msg.sender] != artHashToCheck){
           _; 
-        }*/
-        _;
+        }
   }
+  modifier checkArtOwner(uint _time) { 
+    if(artHash[msg.sender])
+    _; 
+  }
+  
   modifier onlyOwner{ 
     require (
       msg.sender == devOwner,

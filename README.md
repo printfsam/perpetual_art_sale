@@ -45,3 +45,10 @@ Current Art
 
 https://www.cryptoarte.io/store - crypto art might use this
 cryptograffiti - might want to use to sell art
+
+
+Testing
+ArtPerpet.deployed().then(instance => instance.setArtHash("samtest"))
+ArtPerpet.deployed().then(instance => instance.artHash.call(web3.eth.accounts[0]))
+
+ArtPerpet.deployed().then(instance => instance.award.call(web3.eth.accounts[0]))
