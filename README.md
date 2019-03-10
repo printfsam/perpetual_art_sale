@@ -19,12 +19,12 @@ The smart contract will be realized in Solidity and pushed to the Public Ethereu
 ## Edge Cases
 * If a owner wants to sell the artwork he can chose to during the next sale cycle.
 * If no one bids on the piece for more than a year, the price begins to decline by a certain % each cycle.
-
+* Should the current owner be required to pay full price again to keep it?
 
 ## Pay Breakdown
 * Artist:    40%
 * Owner:     30%
-* Charity:   20%
+* Charity:   20% ?
 * Dev:       10%
 
 
@@ -35,7 +35,7 @@ Buyer 1 buys the artwork and is the new owner.
 Sale cycle 1 comes up.
 Buyer 2 bids the current price of the artwork.
 Possible options:
-Buyer 1 now has to match the current price of the bid, which means he has to pay 2x for the piece?
+Buyer 1 now has to match the current price of the bid, which means he has to pay 2x for the piece
 Buyer 1 now has to match the difference between the current price and bid price.
-Buyer 1 should have some incentive to keep the price????
+Buyer 1 should have some incentive to keep the price
 
