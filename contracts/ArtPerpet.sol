@@ -6,14 +6,15 @@ contract ArtPerpet {
     string artHash;
     address highestBidder;
     uint highestBid;
-    uint bidInterval;
+    uint ownershipPeriod;
     uint creationTime;
     uint startTime;
     uint endTime;
   }
 
 
-  mapping (string => ArtPiece) gallary;
+  mapping (address => ArtPiece) public gallary;
+
   address public owner;
   mapping (address => uint) public pendingWithdraws;
 
@@ -25,30 +26,32 @@ contract ArtPerpet {
     owner = msg.sender;
   }
 
-  function newAuction (string artHash,uint bidInterval) public {
-    uint auctionEndTime = now + bidInterval;
+  function newAuction (string _artHash,uint _ownershipPeriod) public {
+    uint auctionPeriod = _ownershipPeriod * 1 days;
+    uint auctionEndTime = now + (_ownershipPeriod * 1 days);
     address bidder;
     uint highestBid = 0;
-    gallary[artHash] = ArtPiece(msg.sender,artHash,bidder,highestBid,bidInterval,now,now,auctionEndTime);
+    gallary[msg.sender] = ArtPiece(msg.sender,_artHash,bidder,highestBid,auctionPeriod,now,now,auctionEndTime);
   }
 
-  function placeBid(string artHash) public payable {
-    require(now <= gallary[artHash].endTime,"Bidding Over");
-    require(msg.value > gallary[artHash].highestBid, "Someone Bid Higher");
+  function placeBid(address _artist) public payable {
+    require(now <= gallary[_artist].endTime,"Bidding Over");
+    require(msg.value > gallary[_artist].highestBid, "Someone Bid Higher");
     //Return money to sender//////////////////////////////////////////////////////////////
     // else
-    gallary[artHash].highestBidder = msg.sender;
-    gallary[artHash].highestBid = msg.value;
+    gallary[_artist].highestBidder = msg.sender;
+    gallary[_artist].highestBid = msg.value;
   }
 
   // Bidding is over
-  function awardBid (string artHash) public payable { 
-    require(now >= gallary[artHash].endTime,"Bidding Over");
-
-    owner.transfer(ownerAmount * gallary[artHash].highestBid);
-    gallary[artHash].artist.transfer(artistAmount * gallary[artHash].highestBid);
-    gallary[artHash].startTime = now;
-    gallary[artHash].endTime = now + gallary[artHash].bidInterval;
+  function awardBid (address _artist) public payable { 
+    require(now >= gallary[_artist].endTime,"Bidding Over");
+    // Check if is artist
+    require(msg.sender == gallary[_artist].artist, "Can only be collected by the Artist");
+    owner.transfer(ownerAmount * gallary[_artist].highestBid);
+    msg.sender.transfer(artistAmount * gallary[_artist].highestBid);
+    gallary[_artist].startTime = now;
+    gallary[_artist].endTime = now + gallary[_artist].ownershipPeriod;
   }
 
   //Standard Withdraw function
@@ -66,6 +69,32 @@ contract ArtPerpet {
     }
 
   }
+  function getArtist(address _artist) view public returns(address){
+    return gallary[_artist].artist; 
+  }
+  function getArtHash(address _artist) view public returns(string){
+    return gallary[_artist].artHash;
+  }
+  function getHighestBidder(address _artist) view public returns(address){
+    return gallary[_artist].highestBidder;
+  }
+  function getHighestBid(address _artist) view public returns(uint){
+    return gallary[_artist].highestBid;
+  }
+  function getOwnershipPeriod(address _artist) view public returns(uint){
+    return gallary[_artist].ownershipPeriod;
+  }
+  function getCreationTime(address _artist) view public returns(uint){
+    return gallary[_artist].creationTime;
+  }
+  function getStartTime(address _artist) view public returns(uint){
+    return gallary[_artist].startTime;
+  }
+  function getEndTime(address _artist) view public returns(uint){
+    return gallary[_artist].endTime; 
+  }
+
+  
 
 }
   
