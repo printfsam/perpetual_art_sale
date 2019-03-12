@@ -2,7 +2,7 @@ pragma solidity >=0.4.21 <0.6.0;
 
 contract ArtPerpet {
   struct ArtPiece {
-    address artist;
+    address payable artist;
     string artHash;
     address highestBidder;
     uint highestBid;
@@ -15,18 +15,19 @@ contract ArtPerpet {
 
   mapping (address => ArtPiece) public gallary;
 
-  address public owner;
+  address payable public owner;
   mapping (address => uint) public pendingWithdraws;
 
   uint public ownerAmount = 1;
-  uint public artistAmount = 50;
-  uint public purchaserAmount = 49;
+  uint public artistAmount = 1;
+  // TODO: Implement Purchaser 
+  // uint public purchaserAmount = 49;
 
   constructor() public {
     owner = msg.sender;
   }
 
-  function newAuction (string _artHash,uint _ownershipPeriod) public {
+  function newAuction (string memory _artHash,uint _ownershipPeriod) public {
     uint auctionPeriod = _ownershipPeriod * 1 days;
     uint auctionEndTime = now + (_ownershipPeriod * 1 days);
     address bidder;
@@ -35,21 +36,25 @@ contract ArtPerpet {
   }
 
   function placeBid(address _artist) public payable {
+    // Convert to modifier
     require(now <= gallary[_artist].endTime,"Bidding Over");
     require(msg.value > gallary[_artist].highestBid, "Someone Bid Higher");
-    //Return money to sender//////////////////////////////////////////////////////////////
-    // else
+    //TODO: Return money to sender
     gallary[_artist].highestBidder = msg.sender;
     gallary[_artist].highestBid = msg.value;
   }
 
   // Bidding is over
-  function awardBid (address _artist) public payable { 
-    require(now >= gallary[_artist].endTime,"Bidding Over");
+  function awardBid (address payable _artist) public payable { 
+    // Convert to modifier
+    require(now >= gallary[_artist].endTime,"Bidding Not Over");
     // Check if is artist
     require(msg.sender == gallary[_artist].artist, "Can only be collected by the Artist");
-    owner.transfer(ownerAmount * gallary[_artist].highestBid);
-    msg.sender.transfer(artistAmount * gallary[_artist].highestBid);
+    uint totalReward = gallary[_artist].highestBid;
+    uint ownerAmt = totalReward / 10;
+    uint artistAmt = (totalReward - ownerAmt); 
+    owner.transfer(ownerAmt);
+    _artist.transfer(artistAmt);
     gallary[_artist].startTime = now;
     gallary[_artist].endTime = now + gallary[_artist].ownershipPeriod;
   }
@@ -69,10 +74,13 @@ contract ArtPerpet {
     }
 
   }
+  function() external payable {
+
+  }
   function getArtist(address _artist) view public returns(address){
     return gallary[_artist].artist; 
   }
-  function getArtHash(address _artist) view public returns(string){
+  function getArtHash(address _artist) view public returns(string memory){
     return gallary[_artist].artHash;
   }
   function getHighestBidder(address _artist) view public returns(address){
@@ -93,8 +101,9 @@ contract ArtPerpet {
   function getEndTime(address _artist) view public returns(uint){
     return gallary[_artist].endTime; 
   }
-
-  
-
+  // Helper for testing
+  function setEndTime(address _artist,uint _ownershipPeriod) public returns(uint){
+    gallary[_artist].endTime = now - (_ownershipPeriod * 1 days); 
+  }
 }
   
